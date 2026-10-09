@@ -444,6 +444,22 @@ extern "C" {
         return transcoder->pTranscoder->get_has_alpha();
     }
 
+    // DFD color model: 163 = ETC1S, 166 = UASTC.
+    uint32_t ktx2_transcoder_get_dfd_color_model(const Ktx2Transcoder *transcoder) {
+        return transcoder->pTranscoder->get_dfd_color_model();
+    }
+
+    // KTX2 dfd channel_id of sample 0 / sample 1 (only meaningful for ETC1S;
+    // UASTC has a single sample). Values per the KTX2 spec: 0=R, 1=G, 2=B,
+    // 15=alpha.
+    uint32_t ktx2_transcoder_get_dfd_channel_id0(const Ktx2Transcoder *transcoder) {
+        return (uint32_t)transcoder->pTranscoder->get_dfd_channel_id0();
+    }
+
+    uint32_t ktx2_transcoder_get_dfd_channel_id1(const Ktx2Transcoder *transcoder) {
+        return (uint32_t)transcoder->pTranscoder->get_dfd_channel_id1();
+    }
+
     // KTX2_KHR_DF_TRANSFER_LINEAR (0) or KTX2_KHR_DF_TRANSFER_SRGB (1).
     uint32_t ktx2_transcoder_get_dfd_transfer_func(const Ktx2Transcoder *transcoder) {
         return transcoder->pTranscoder->get_dfd_transfer_func();

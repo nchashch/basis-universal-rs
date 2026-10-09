@@ -69,6 +69,22 @@ impl Ktx2Transcoder {
         unsafe { sys::ktx2_transcoder_get_has_alpha(self.ptr) != 0 }
     }
 
+    /// DFD color model: `163` = ETC1S, `166` = UASTC.
+    pub fn dfd_color_model(&self) -> u32 {
+        unsafe { sys::ktx2_transcoder_get_dfd_color_model(self.ptr) }
+    }
+
+    /// KTX2 DFD channel id of sample 0 / sample 1 (only meaningful for
+    /// ETC1S; UASTC has a single sample). Values per the KTX2 spec: 0 = R,
+    /// 1 = G, 2 = B, 15 = alpha.
+    pub fn dfd_channel_id0(&self) -> u32 {
+        unsafe { sys::ktx2_transcoder_get_dfd_channel_id0(self.ptr) }
+    }
+
+    pub fn dfd_channel_id1(&self) -> u32 {
+        unsafe { sys::ktx2_transcoder_get_dfd_channel_id1(self.ptr) }
+    }
+
     /// The DFD transfer function: `1` for KTX2_KHR_DF_TRANSFER_LINEAR, `2`
     /// for KTX2_KHR_DF_TRANSFER_SRGB.
     pub fn dfd_transfer_func(&self) -> u32 {

@@ -1052,6 +1052,9 @@ extern "C" {
     pub fn ktx2_transcoder_get_levels(transcoder: *const Ktx2Transcoder) -> u32;
     pub fn ktx2_transcoder_is_etc1s(transcoder: *const Ktx2Transcoder) -> bool;
     pub fn ktx2_transcoder_get_has_alpha(transcoder: *const Ktx2Transcoder) -> u32;
+    pub fn ktx2_transcoder_get_dfd_color_model(transcoder: *const Ktx2Transcoder) -> u32;
+    pub fn ktx2_transcoder_get_dfd_channel_id0(transcoder: *const Ktx2Transcoder) -> u32;
+    pub fn ktx2_transcoder_get_dfd_channel_id1(transcoder: *const Ktx2Transcoder) -> u32;
     pub fn ktx2_transcoder_get_dfd_transfer_func(transcoder: *const Ktx2Transcoder) -> u32;
     pub fn ktx2_transcoder_start_transcoding(transcoder: *mut Ktx2Transcoder) -> bool;
     pub fn ktx2_transcoder_transcode_image_level(
