@@ -1,5 +1,8 @@
 # basis-universal-rs
 
+-- This is a fork of basis-universal-rs with a patch that
+adds support for ETC1S+BasisLZ for lossy GPU compression.
+
 Bindings for Binomial LLC's [`basis-universal`](https://github.com/BinomialLLC/basis_universal) Supercompressed GPU 
 Texture Codec
 
