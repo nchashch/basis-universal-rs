@@ -1031,3 +1031,35 @@ extern "C" {
 extern "C" {
     pub fn basisu_transcoder_init();
 }
+
+#[repr(align(8))]
+#[derive(Debug, Copy, Clone)]
+pub struct Ktx2Transcoder {
+    pub _bindgen_opaque_blob: u64,
+}
+extern "C" {
+    // KTX2 transcoder: decodes KTX2 files with ETC1S (with or without BasisLZ
+    // supercompression) or UASTC (raw or Zstd/Zlib-supercompressed) data.
+    pub fn ktx2_transcoder_new() -> *mut Ktx2Transcoder;
+    pub fn ktx2_transcoder_delete(transcoder: *mut Ktx2Transcoder);
+    pub fn ktx2_transcoder_init(
+        transcoder: *mut Ktx2Transcoder,
+        data: *const ::std::os::raw::c_void,
+        data_size: u32,
+    ) -> bool;
+    pub fn ktx2_transcoder_get_width(transcoder: *const Ktx2Transcoder) -> u32;
+    pub fn ktx2_transcoder_get_height(transcoder: *const Ktx2Transcoder) -> u32;
+    pub fn ktx2_transcoder_get_levels(transcoder: *const Ktx2Transcoder) -> u32;
+    pub fn ktx2_transcoder_is_etc1s(transcoder: *const Ktx2Transcoder) -> bool;
+    pub fn ktx2_transcoder_get_has_alpha(transcoder: *const Ktx2Transcoder) -> u32;
+    pub fn ktx2_transcoder_get_dfd_transfer_func(transcoder: *const Ktx2Transcoder) -> u32;
+    pub fn ktx2_transcoder_start_transcoding(transcoder: *mut Ktx2Transcoder) -> bool;
+    pub fn ktx2_transcoder_transcode_image_level(
+        transcoder: *mut Ktx2Transcoder,
+        level_index: u32,
+        pOutput_blocks: *mut ::std::os::raw::c_void,
+        output_blocks_buf_size_in_blocks_or_pixels: u32,
+        fmt: basist_transcoder_texture_format,
+        decode_flags: i32,
+    ) -> bool;
+}

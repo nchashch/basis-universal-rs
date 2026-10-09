@@ -8,8 +8,14 @@ pub use enums::*;
 mod transcoder;
 pub use transcoder::*;
 
+mod ktx2_transcoder;
+pub use ktx2_transcoder::*;
+
 #[cfg(test)]
 mod transcoding_tests;
+
+#[cfg(test)]
+mod ktx2_tests;
 
 static TRANSCODER_INIT_CALLED: AtomicBool = AtomicBool::new(false);
 lazy_static::lazy_static! {

@@ -391,4 +391,88 @@ extern "C" {
     void set_debug_flags(basist::debug_flags_t f) {
         basist::set_debug_flags(f);
     }
+
+    // ---------------------------------------------------------------------------
+    // KTX2 transcoder — decodes KTX2 files holding ETC1S data (with or without
+    // BasisLZ supercompression) or UASTC data (raw or Zstd/Zlib-supercompressed)
+    // into GPU block formats. The ETC1S+BasisLZ path is what gltfpack `-tc`
+    // produces and what the ktx2 crate cannot decode.
+    // ---------------------------------------------------------------------------
+    struct Ktx2Transcoder {
+        basist::ktx2_transcoder *pTranscoder;
+
+        // ktx2_transcoder::init() keeps a pointer to the file data until the
+        // object is destroyed, so we own a copy of it here.
+        std::vector<uint8_t> data;
+    };
+
+    Ktx2Transcoder *ktx2_transcoder_new() {
+        basist::basisu_transcoder_init();
+        Ktx2Transcoder *transcoder = new Ktx2Transcoder;
+        transcoder->pTranscoder = new basist::ktx2_transcoder();
+        return transcoder;
+    }
+
+    void ktx2_transcoder_delete(Ktx2Transcoder *transcoder) {
+        delete transcoder->pTranscoder;
+        delete transcoder;
+    }
+
+    // Parses the KTX2 header, level index array, DFD and key values.
+    bool ktx2_transcoder_init(Ktx2Transcoder *transcoder, const void *pData, uint32_t data_size) {
+        transcoder->data.assign((const uint8_t *)pData, (const uint8_t *)pData + data_size);
+        return transcoder->pTranscoder->init(transcoder->data.data(), data_size);
+    }
+
+    uint32_t ktx2_transcoder_get_width(const Ktx2Transcoder *transcoder) {
+        return transcoder->pTranscoder->get_width();
+    }
+
+    uint32_t ktx2_transcoder_get_height(const Ktx2Transcoder *transcoder) {
+        return transcoder->pTranscoder->get_height();
+    }
+
+    uint32_t ktx2_transcoder_get_levels(const Ktx2Transcoder *transcoder) {
+        return transcoder->pTranscoder->get_levels();
+    }
+
+    bool ktx2_transcoder_is_etc1s(const Ktx2Transcoder *transcoder) {
+        return transcoder->pTranscoder->is_etc1s();
+    }
+
+    uint32_t ktx2_transcoder_get_has_alpha(const Ktx2Transcoder *transcoder) {
+        return transcoder->pTranscoder->get_has_alpha();
+    }
+
+    // KTX2_KHR_DF_TRANSFER_LINEAR (0) or KTX2_KHR_DF_TRANSFER_SRGB (1).
+    uint32_t ktx2_transcoder_get_dfd_transfer_func(const Ktx2Transcoder *transcoder) {
+        return transcoder->pTranscoder->get_dfd_transfer_func();
+    }
+
+    // Must be called before transcode_image_level(). For ETC1S files this
+    // decompresses the global endpoint/selector codebooks (the BasisLZ
+    // supercompression global data), which is expensive, so call it once.
+    bool ktx2_transcoder_start_transcoding(Ktx2Transcoder *transcoder) {
+        return transcoder->pTranscoder->start_transcoding();
+    }
+
+    // Transcodes a single mipmap level (layer 0, face 0) to one of the
+    // supported GPU block formats. output_blocks_buf_size_in_blocks_or_pixels
+    // must hold the level's total output blocks (or pixels for RGBA32).
+    bool ktx2_transcoder_transcode_image_level(
+            Ktx2Transcoder *transcoder,
+            uint32_t level_index,
+            void *pOutput_blocks,
+            uint32_t output_blocks_buf_size_in_blocks_or_pixels,
+            basist::transcoder_texture_format fmt,
+            uint32_t decode_flags) {
+        return transcoder->pTranscoder->transcode_image_level(
+                level_index,
+                0, // layer_index
+                0, // face_index
+                pOutput_blocks,
+                output_blocks_buf_size_in_blocks_or_pixels,
+                fmt,
+                decode_flags);
+    }
 }
